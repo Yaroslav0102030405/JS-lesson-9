@@ -67,20 +67,20 @@ console.log(objA.hasOwnProperty("x"));
  * 4. Возвращается значение свойства.
  */
 
-const objD = Object.create({ v: 5 })
-objD.r = 100
-console.log('objD', objD)
+const objD = Object.create({ v: 5 });
+objD.r = 100;
+console.log("objD", objD);
 
 /*
-* Основы ООП: класс, экземпляр (обьект), интерфейс
-*/
+ * Основы ООП: класс, экземпляр (обьект), интерфейс
+ */
 
 /*
-* Функция-конструктор
-* Именование
-* Оператор new
-* Свойство Function.prototype
-*/
+ * Функция-конструктор
+ * Именование
+ * Оператор new
+ * Свойство Function.prototype
+ */
 
 // Обьявляем функцию конструктор
 // Она отличаеться что она называеться с большой буквы и она не отвечает на вопрос что сделать
@@ -97,34 +97,94 @@ console.log('objD', objD)
 // // В результате вызова мы ыполучаем обьект который является экземпляром класса Car
 // console.log(myCar)
 
-
 // Используя классы конструктор мы можем описать какую-то сущность
 // внутри нее используя this определить набор характеристик каких-то
 // и потом просто передавать разные значения и ун ас получиться фабрика обьектов
 
 // тут мы сделали деструктуризацию
-const Car = function ({brand, model, price} = {}) {
+const Car = function ({ brand, model, price } = {}) {
   // 2 Йункция вызывается в контексте созданного обьекта
   // то есть в this записывается ссылка на него
-  this.brand = brand
-  this.model = model
-  this.price = price
+  this.brand = brand;
+  this.model = model;
+  this.price = price;
 
   // this.a = value
   // 4 Ссылка на обьект возвращается в место вызова Car
-
-  this.changePrice = function (newPrice) {
-    this.price = newPrice;
-    // Мы сейчас добавим метод который изменяет цену
-// то что вы обьявляете внутри этой функции уходит на каждый экземпляр делается копия 
 };
 
+// 3 В свойствах this __proto__ записывается ссылка на обьект Car.prototype
+// то есть Car.protptype это ПРОТОТИП будущего обьекта (экземпляра)
+Car.prototype.sayHi = function () {
+  console.log("Car.prototype.sayHi -> this", this);
+  console.log("Hello");
+};
+Car.prototype.changePrice = function (newPrice) {
+  this.price = newPrice;
+};
+
+console.log(Car.prototype);
+
+// this.changePrice = function (newPrice) {
+//   this.price = newPrice;
+// Мы сейчас добавим метод который изменяет цену
+// то что вы обьявляете внутри этой функции уходит на каждый экземпляр делается копия
 // 1 Если функция вызываеться через new создаеться пустой обьект
-const myCar = new Car({ brand: 'Audi', model: '03',price: 3500, });
+const myCar = new Car({
+  brand: "Audi",
+  model: "03",
+  price: 3500,
+});
 console.log(myCar);
+myCar.sayHi();
+myCar.changePrice(10000);
+// тут мы изменили цену машины
 
-const myCar2 = new Car({ brand: 'BMW', model: 'X6', price: 5000 });
-console.log(myCar2);
+// const myCar2 = new Car({ brand: 'BMW', model: 'X6', price: 5000 });
+// console.log(myCar2);
 
-// const myCar3 = new Car();
-//   console.log(myCar3);
+// const myCar3 = new Car({ brand: 'Audi', model: 'A6', price: 6500 });
+// console.log()
+
+// Стрелки не могуть быть конструкторами
+
+// В протоипе в 99% случаев хранят методы
+// Если вы будете обьявлять методы внутри самой функции то на каждом экземпляре будет пачка этих копиий
+// по этому хранят в протоипе вне функции
+// Сначала ижет функция конструктор а потом в его свойство прототайп накидывают методыи получаеться общее хранилище методов
+
+// Шаги
+// 1 Описал схему (создал конструктор)
+// 2 Напихал методов в прототип в сойство в prototypr функции конструктора
+// через nwe создал экземпляр и у экземпляров есть одинаковый набор свойств с разными значениями
+// плюс доступ к этому набору методов к прототипу своему
+const User = function ({ email, password } = {}) {
+  this.email = email;
+  this.password = password;
+};
+
+User.prototype.changeEmail = function (newMail) {
+  this.email = newMail;
+};
+
+const mango = new User({ email: "mango@mail.com", password: 11111111 });
+
+mango.changeEmail("my-new-mail@mail.com");
+console.log(mango);
+
+// Итоги
+// 1 У каждого обьекта есть свойство __proto__
+// 2 В этом свойстве лежит ссылка на его ПРОТОТИП то есть другой обьект
+// 3 При сощдании литерала обьекта в сойство ___proto__ записывается на
+// функция.prototype автоматически
+// 4 Функция конструктор это просто функция
+// 5 Всю магию делает оператор new
+// 6 Если функция вызывается через new создается пустой обьект
+// 7 Функция вызывается в контексте созданного обьекта
+
+// За на под капотом
+// 8 В свойствах this __proto__ записывается ссылка на обьект функция.prototype
+// Ссылка на обьект возвращается в место вызова new Функция()
+
+// Есть методы на протоипе которые храняться а есть на самом конструкторе (а в экземплярах не доступны)
+// это называеться статические свойства и методы
